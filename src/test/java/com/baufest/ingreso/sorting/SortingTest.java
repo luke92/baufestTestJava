@@ -37,20 +37,6 @@ public class SortingTest {
 		jugadoresSort.add(p3Sort);
 		jugadoresSort.add(p4Sort);
 		jugadoresSort.add(p5Sort);
-		
-		
-		for (Jugador jugador : jugadores) {
-			System.out.println(jugador);
-		}
-		
-		
-		for (Jugador jugador : jugadoresResult) {
-			System.out.println(jugador);
-		}
-		
-		for (Jugador jugador : jugadoresSort) {
-			System.out.println(jugador);
-		}
 
         assertEquals(jugadoresSort.size(), jugadoresResult.size());
         assertEquals(jugadoresSort.get(0).getNombre(), jugadoresResult.get(0).getNombre());

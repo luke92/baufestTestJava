@@ -29,9 +29,20 @@ public class Sorting {
      * @param jugadores la lista de jugadores a ordenar
      * @return la lista ordenada de jugadores
      */
-	public static List<Jugador> ordenarPorPuntuacionPerdidasYNombre(List<Jugador> jugadores){
-        //TODO: resolver
-        throw new UnsupportedOperationException();
+	public static List<Jugador> ordenarPorPuntuacionPerdidasYNombre(List<Jugador> jugadores) {
+		
+		jugadores.sort((jugador1, jugador2) -> {
+	        if (jugador1.getPuntuacion() != jugador2.getPuntuacion()) {
+	            return jugador2.getPuntuacion() - jugador1.getPuntuacion();
+	        } else if(jugador1.getPerdidas() != jugador2.getPerdidas() ) {
+	        	return jugador1.getPerdidas() - jugador2.getPerdidas();
+	        }
+	        else
+	            return jugador1.getNombre().compareTo(jugador2.getNombre());
+	        
+		}); 	
+
+		return jugadores;
 	}
 	
 }
