@@ -1,5 +1,7 @@
 package com.baufest.ingreso.alphabetSoup;
 
+import java.util.Arrays;
+
 public class WordSearcher {
 
     private char soup[][];
@@ -24,8 +26,38 @@ public class WordSearcher {
      * @return {@link Boolean}	true si la palabra se encuentra
      * en la sopa de letras.
      * */
-    public boolean isPresent(String word){
-        //TODO: resolver
-        throw new UnsupportedOperationException();
+    public boolean isPresent(String word) {               	
+       	if(soup.length == 0) return false;       	
+       	boolean wordIsPresentHorizontal = existsHorizontal(word);
+       	boolean wordIsPresentVertical = existsVertical(word);       	
+    	return wordIsPresentHorizontal || wordIsPresentVertical;
     }
+    
+    private boolean existsHorizontal(String word) {    	
+    	for(int i = 0; i < soup.length; i++) {
+    		String rowString = Arrays.toString(soup[i]);
+    		if(rowString.contains(word)) return true;
+    		if(rowString.contains(reverseString(word))) return true;
+    	}
+    	return false;
+    }
+    
+    private boolean existsVertical(String word) {    	
+    	for(int j = 0; j < soup[0].length; j++) {
+    		StringBuilder stringBuilder = new StringBuilder();
+    		for(int i = 0; i < soup.length; i++) {
+    			stringBuilder.append(soup[i][j]);
+    		}
+    		if(stringBuilder.indexOf(word) >= 0) return true;
+    		if(stringBuilder.indexOf(reverseString(word)) >=0) return true;
+    	}
+    	return false;
+    }
+    
+    private String reverseString(String word) {
+    	StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append(word);
+		return stringBuilder.reverse().toString();
+    }
+    
 }
