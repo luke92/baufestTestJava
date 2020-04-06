@@ -77,6 +77,7 @@ public class WordSearcher {
     	
     	 
     	if(canMoveUp(row, column)) {
+    		
     		if(existsCharacter(word, indexWord + 1, row - 1, column)) {
     			stringBuilder.append(word.charAt(indexWord + 1));
     			if(isSameWord(stringBuilder, word)) return true;
@@ -131,14 +132,13 @@ public class WordSearcher {
     	return (!coordsUsed.contains(new Coord(row, column + 1)) && (column + 1) < this.columns);
     }
     
-    private boolean existsCharacter(String word, int indexWord, int row, int column) {    	    	
+    private boolean existsCharacter(String word, int indexWord, int row, int column) {
+    	coordsUsed.add(new Coord(row, column));
     	return soup[row][column] == word.charAt(indexWord);    	
     }
     
     private boolean isSameWord(StringBuilder stringBuilded, String word) {
-    	if(stringBuilded.toString().equalsIgnoreCase(word)) return true;
-    	if(stringBuilded.toString().equalsIgnoreCase(reverseString(word))) return true;
-    	return false;
+    	return (stringBuilded.toString().equalsIgnoreCase(word) || stringBuilded.toString().equalsIgnoreCase(reverseString(word)));
     }
     
     private String reverseString(String word) {
