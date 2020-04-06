@@ -1,13 +1,31 @@
 package com.baufest.ingreso.alphabetSoup;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import javafx.util.Pair;
 
 public class WordSearcher {
-
+	
+	
+	
     private char soup[][];
-
+    private int rows;
+    private int columns;
+    private Set<Coord> coordsUsed;
+    
     public WordSearcher(char soup[][]){
         this.soup = soup;
+        rows = soup.length;
+        if(rows > 0) {        	
+        	columns = soup[0].length;
+        }        	
+        else
+        	columns = 0;
+        
+        coordsUsed = new HashSet<>();
+                
     }
 
     /**
@@ -26,31 +44,100 @@ public class WordSearcher {
      * @return {@link Boolean}	true si la palabra se encuentra
      * en la sopa de letras.
      * */
-    public boolean isPresent(String word) {               	
-       	if(soup.length == 0) return false;       	
-       	boolean wordIsPresentHorizontal = existsHorizontal(word);
-       	boolean wordIsPresentVertical = existsVertical(word);       	
-    	return wordIsPresentHorizontal || wordIsPresentVertical;
-    }
-    
-    private boolean existsHorizontal(String word) {    	
-    	for(int i = 0; i < soup.length; i++) {
-    		String rowString = Arrays.toString(soup[i]);
-    		if(rowString.contains(word)) return true;
-    		if(rowString.contains(reverseString(word))) return true;
-    	}
-    	return false;
-    }
-    
-    private boolean existsVertical(String word) {    	
-    	for(int j = 0; j < soup[0].length; j++) {
-    		StringBuilder stringBuilder = new StringBuilder();
-    		for(int i = 0; i < soup.length; i++) {
-    			stringBuilder.append(soup[i][j]);
+    public boolean isPresent(String word) {
+    	
+    	if(rows == 0) return false;
+    	
+    	// Recorro las filas de la sopa de letras
+    	for(int row = 0; row < soup.length; row++) {
+    		 		
+    		//recorro las columnas de la fila de la sopa de letras
+    		for(int column = 0; column < soup[row].length; column++) {
+    			
+    			coordsUsed = new HashSet<>();
+        		StringBuilder stringBuilder = new StringBuilder();
+        		int indexWord = 0;
+        		
+    			if(existsCharacter(word,indexWord, row,column)) {
+    				stringBuilder.append(word.charAt(0));
+    				coordsUsed.add(new Coord(row, column));
+    				    				
+    				if(wordIsComplete(word,indexWord,row,column,stringBuilder)) return true;
+    			}
+    			
     		}
-    		if(stringBuilder.indexOf(word) >= 0) return true;
-    		if(stringBuilder.indexOf(reverseString(word)) >=0) return true;
+    		
     	}
+       	
+    	return false; 
+       	
+    }
+    
+    private boolean wordIsComplete(String word, int indexWord, int row, int column, StringBuilder stringBuilder) {
+    	
+    	 
+    	if(canMoveUp(row, column)) {
+    		if(existsCharacter(word, indexWord + 1, row - 1, column)) {
+    			stringBuilder.append(word.charAt(indexWord + 1));
+    			if(isSameWord(stringBuilder, word)) return true;
+    			return wordIsComplete(word, indexWord + 1, row - 1, column, stringBuilder);
+    			
+    		}
+    	}
+    		
+    	if(canMoveDown(row, column)) {
+    		if(existsCharacter(word, indexWord + 1, row + 1, column)) {
+    			stringBuilder.append(word.charAt(indexWord + 1));
+    			if(isSameWord(stringBuilder, word)) return true;
+    			return wordIsComplete(word, indexWord + 1, row + 1, column, stringBuilder);
+    		}
+    	}
+    	
+    	if(canMoveLeft(row, column)) {
+    		if(existsCharacter(word, indexWord + 1, row, column - 1)) {
+    			stringBuilder.append(word.charAt(indexWord + 1));
+    			if(isSameWord(stringBuilder, word)) return true;
+    			return wordIsComplete(word, indexWord + 1, row, column - 1, stringBuilder);
+    		}
+    	}
+    	
+    	if(canMoveRight(row, column)) {
+    		if(existsCharacter(word, indexWord + 1, row, column + 1)) {
+    			stringBuilder.append(word.charAt(indexWord + 1));
+    			if(isSameWord(stringBuilder, word)) return true;
+    			return wordIsComplete(word, indexWord + 1, row, column + 1, stringBuilder);
+    		}
+    	}
+    	
+    	
+    	return false;
+    			
+    	
+    }
+    
+    private boolean canMoveUp (int row, int column) {
+    	return (!coordsUsed.contains(new Coord(row - 1, column)) && (row - 1) >= 0);
+    }
+    
+    private boolean canMoveDown (int row, int column) {
+    	return (!coordsUsed.contains(new Coord(row + 1, column)) && (row + 1) < this.rows);
+    }
+    
+    private boolean canMoveLeft (int row, int column) {
+    	return (!coordsUsed.contains(new Coord(row, column - 1)) && (column - 1) >= 0);
+    }
+    
+    private boolean canMoveRight (int row, int column) {
+    	return (!coordsUsed.contains(new Coord(row, column + 1)) && (column + 1) < this.columns);
+    }
+    
+    private boolean existsCharacter(String word, int indexWord, int row, int column) {    	    	
+    	return soup[row][column] == word.charAt(indexWord);    	
+    }
+    
+    private boolean isSameWord(StringBuilder stringBuilded, String word) {
+    	if(stringBuilded.toString().equalsIgnoreCase(word)) return true;
+    	if(stringBuilded.toString().equalsIgnoreCase(reverseString(word))) return true;
     	return false;
     }
     
@@ -60,4 +147,9 @@ public class WordSearcher {
 		return stringBuilder.reverse().toString();
     }
     
+
+    
 }
+
+
+
