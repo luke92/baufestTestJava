@@ -1,33 +1,18 @@
 package com.baufest.ingreso.alphabetSoup;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
-import javafx.util.Pair;
 
 public class WordSearcher {
 	
 	
 	
     private char soup[][];
-    private int rows;
-    private int columns;
-    private Set<Coord> coordsUsed;
-    
+        
     public WordSearcher(char soup[][]){
         this.soup = soup;
-        rows = soup.length;
-        if(rows > 0) {        	
-        	columns = soup[0].length;
-        }        	
-        else
-        	columns = 0;
-        
-        coordsUsed = new HashSet<>();
-                
+                        
     }
-
     /**
      * El objetivo de este ejercicio es implementar una función que determine si una palabra está en una sopa de letras.
      *
@@ -45,9 +30,11 @@ public class WordSearcher {
      * en la sopa de letras.
      * */
     public boolean isPresent(String word) {
-    	
-    	if(rows == 0) return false;
-    	
+
+        Set<Coord> coordsUsed;
+     
+        coordsUsed = new HashSet<>();       
+  	
     	// Recorro las filas de la sopa de letras
     	for(int row = 0; row < soup.length; row++) {
     		 		
@@ -58,11 +45,11 @@ public class WordSearcher {
         		StringBuilder stringBuilder = new StringBuilder();
         		int indexWord = 0;
         		
-    			if(existsCharacter(word,indexWord, row,column)) {
+    			if(existsCharacter(word,indexWord, row,column,coordsUsed)) {
     				stringBuilder.append(word.charAt(0));
     				coordsUsed.add(new Coord(row, column));
     				    				
-    				if(wordIsComplete(word,indexWord,row,column,stringBuilder)) return true;
+    				if(wordIsComplete(word,indexWord,row,column,stringBuilder,coordsUsed)) return true;
     			}
     			
     		}
@@ -73,82 +60,76 @@ public class WordSearcher {
        	
     }
     
-    private boolean wordIsComplete(String word, int indexWord, int row, int column, StringBuilder stringBuilder) {
+    private boolean wordIsComplete(String word, int indexWord, int row, int column, StringBuilder stringBuilder, Set<Coord> coordsUsed) {
     	
+    	if(isSameWord(stringBuilder, word)) return true;
     	 
-    	if(canMoveUp(row, column)) {
+    	if(canMoveUp(row, column, coordsUsed)) {
     		
-    		if(existsCharacter(word, indexWord + 1, row - 1, column)) {
+    		if(existsCharacter(word, indexWord + 1, row - 1, column, coordsUsed)) {
     			stringBuilder.append(word.charAt(indexWord + 1));
     			if(isSameWord(stringBuilder, word)) return true;
-    			return wordIsComplete(word, indexWord + 1, row - 1, column, stringBuilder);
+    			return wordIsComplete(word, indexWord + 1, row - 1, column, stringBuilder, coordsUsed);
     			
     		}
     	}
     		
-    	if(canMoveDown(row, column)) {
-    		if(existsCharacter(word, indexWord + 1, row + 1, column)) {
+    	if(canMoveDown(row, column, coordsUsed)) {
+    		if(existsCharacter(word, indexWord + 1, row + 1, column, coordsUsed)) {
     			stringBuilder.append(word.charAt(indexWord + 1));
     			if(isSameWord(stringBuilder, word)) return true;
-    			return wordIsComplete(word, indexWord + 1, row + 1, column, stringBuilder);
+    			return wordIsComplete(word, indexWord + 1, row + 1, column, stringBuilder, coordsUsed);
     		}
     	}
     	
-    	if(canMoveLeft(row, column)) {
-    		if(existsCharacter(word, indexWord + 1, row, column - 1)) {
+    	if(canMoveLeft(row, column, coordsUsed)) {
+    		if(existsCharacter(word, indexWord + 1, row, column - 1, coordsUsed)) {
     			stringBuilder.append(word.charAt(indexWord + 1));
     			if(isSameWord(stringBuilder, word)) return true;
-    			return wordIsComplete(word, indexWord + 1, row, column - 1, stringBuilder);
+    			return wordIsComplete(word, indexWord + 1, row, column - 1, stringBuilder, coordsUsed);
     		}
     	}
     	
-    	if(canMoveRight(row, column)) {
-    		if(existsCharacter(word, indexWord + 1, row, column + 1)) {
+    	if(canMoveRight(row, column, coordsUsed)) {
+    		if(existsCharacter(word, indexWord + 1, row, column + 1, coordsUsed)) {
     			stringBuilder.append(word.charAt(indexWord + 1));
     			if(isSameWord(stringBuilder, word)) return true;
-    			return wordIsComplete(word, indexWord + 1, row, column + 1, stringBuilder);
+    			return wordIsComplete(word, indexWord + 1, row, column + 1, stringBuilder, coordsUsed);
     		}
     	}
     	
+    	if(isSameWord(stringBuilder, word)) return true;
     	
     	return false;
     			
     	
     }
     
-    private boolean canMoveUp (int row, int column) {
+    private boolean canMoveUp (int row, int column, Set<Coord> coordsUsed) {
     	return (!coordsUsed.contains(new Coord(row - 1, column)) && (row - 1) >= 0);
     }
     
-    private boolean canMoveDown (int row, int column) {
-    	return (!coordsUsed.contains(new Coord(row + 1, column)) && (row + 1) < this.rows);
+    private boolean canMoveDown (int row, int column, Set<Coord> coordsUsed) {
+    	return (!coordsUsed.contains(new Coord(row + 1, column)) && (row + 1) < soup.length);
     }
     
-    private boolean canMoveLeft (int row, int column) {
+    private boolean canMoveLeft (int row, int column, Set<Coord> coordsUsed) {
     	return (!coordsUsed.contains(new Coord(row, column - 1)) && (column - 1) >= 0);
     }
     
-    private boolean canMoveRight (int row, int column) {
-    	return (!coordsUsed.contains(new Coord(row, column + 1)) && (column + 1) < this.columns);
+    private boolean canMoveRight (int row, int column, Set<Coord> coordsUsed) {
+    	return (!coordsUsed.contains(new Coord(row, column + 1)) && (column + 1) < soup[0].length);
     }
     
-    private boolean existsCharacter(String word, int indexWord, int row, int column) {
+    private boolean existsCharacter(String word, int indexWord, int row, int column, Set<Coord> coordsUsed) {
     	coordsUsed.add(new Coord(row, column));
     	return soup[row][column] == word.charAt(indexWord);    	
     }
     
     private boolean isSameWord(StringBuilder stringBuilded, String word) {
-    	return (stringBuilded.toString().equalsIgnoreCase(word) || stringBuilded.toString().equalsIgnoreCase(reverseString(word)));
+    	return (stringBuilded.toString().equalsIgnoreCase(word));
     }
-    
-    private String reverseString(String word) {
-    	StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append(word);
-		return stringBuilder.reverse().toString();
-    }
-    
-
-    
+     
 }
 
 
