@@ -106,19 +106,27 @@ public class WordSearcher {
     }
     
     private boolean canMoveUp (int row, int column, Set<Coord> coordsUsed) {
-    	return (!coordsUsed.contains(new Coord(row - 1, column)) && (row - 1) >= 0);
+    	if((row - 1) < 0) return false;
+    	
+    	return (!coordsUsed.contains(new Coord(row - 1, column)));
     }
     
     private boolean canMoveDown (int row, int column, Set<Coord> coordsUsed) {
-    	return (!coordsUsed.contains(new Coord(row + 1, column)) && (row + 1) < soup.length);
+    	if((row + 1) >= soup.length) return false;
+    	
+    	return (!coordsUsed.contains(new Coord(row + 1, column)));
     }
     
     private boolean canMoveLeft (int row, int column, Set<Coord> coordsUsed) {
-    	return (!coordsUsed.contains(new Coord(row, column - 1)) && (column - 1) >= 0);
+    	if((column - 1) < 0) return false;
+    	
+    	return (!coordsUsed.contains(new Coord(row, column - 1)));
     }
     
     private boolean canMoveRight (int row, int column, Set<Coord> coordsUsed) {
-    	return (!coordsUsed.contains(new Coord(row, column + 1)) && (column + 1) < soup[0].length);
+    	if((column + 1) >= soup[0].length) return false;
+    	
+    	return (!coordsUsed.contains(new Coord(row, column + 1)));
     }
     
     private boolean existsCharacter(String word, int indexWord, int row, int column, Set<Coord> coordsUsed) {
